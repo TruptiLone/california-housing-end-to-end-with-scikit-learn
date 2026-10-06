@@ -303,8 +303,24 @@ def bootstrap_rmse_ci(y_true, y_pred, n_boot=200, alpha=0.05, random_state=42):
     )
     return float(low), float(high)
 
-# Step 19 - feature_importances (not yet solved)
-# TODO: implement
+# Step 19 - feature_importances
+def feature_importances(search, k=5):
+    # TODO: top-k (importance, name) tuples from the best estimator, importances rounded to 3 decimals.
+    pipeline = search.best_estimator_
+    names = pipeline.steps[0][1].get_feature_names_out()
+    importances = pipeline.steps[-1][1].feature_importances_
+
+    # Rank using full precision before rounding the returned values.
+    ranked = sorted(
+        zip(importances, names),
+        key=lambda pair: pair[0],
+        reverse=True,
+    )
+
+    return [
+        (round(float(importance), 3), name)
+        for importance, name in ranked[:k]
+    ]
 
 # Step 20 - worst_errors (not yet solved)
 # TODO: implement
