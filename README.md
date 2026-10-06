@@ -2,7 +2,7 @@
 
 Predicting district-level median house values with reproducible preprocessing, geographic features, model comparison, and an independent test evaluation.
 
-This learning project implements a complete tabular machine-learning workflow with pandas and scikit-learn. It began as 22 exercises on Deep-ML; the portfolio extension adds training-data exploration, a full-training-set experiment, saved metrics, diagnostic plots, and reproducibility checks. The emphasis is on understanding and evaluating the entire workflow.
+This project builds an end-to-end regression system with pandas and scikit-learn to predict median house values across California districts. It combines exploratory data analysis, feature engineering, geographic clustering, and automated hyperparameter tuning to compare models and evaluate their performance on held-out data. The repository includes the dataset, reproducible experiments, diagnostic visualizations, saved metrics, and checks for preprocessing and model persistence.
 
 ![California training districts colored by median house value](reports/figures/geography.png)
 
@@ -127,11 +127,11 @@ Income categories use `(0, 1.5]`, `(1.5, 3]`, `(3, 4.5]`, `(4.5, 6]`, and `(6, �
 
 ## Evaluation design
 
-The portfolio experiment (`report.py`) uses all **16,512 training rows** and **4,128 held-out test rows**. Models use identical 3-fold CV partitions. The mean baseline is also cross-validated for a fair comparison; its training-only helper is not used as a validation score.
+The full experiment (`report.py`) uses all **16,512 training rows** and **4,128 held-out test rows**. Models use identical 3-fold CV partitions. The mean baseline is also cross-validated for a fair comparison; its training-only helper is not used as a validation score.
 
 Randomized search evaluates **5 of 56 possible parameter combinations**: `geo.n_clusters` from 3–10 and `max_features` from 2–8. Each forest has 50 trees. Random seeds are 42. The chosen estimator is automatically refitted on the full training set. Its test predictions are then used for RMSE, MAE, R², a 200-resample bootstrap interval, and error diagnostics. No hyperparameters are selected using the test results.
 
-The winning search CV score is a model-selection statistic and may be optimistic. The test score is the independent estimate. The original `scaffold.py` remains a faster learning demo: it uses a 4,000-row training sample, 30 trees, and 3 search candidates, so its scores differ from this README.
+The winning search CV score is a model-selection statistic and may be optimistic. The test score is the independent estimate. `scaffold.py` provides a faster demonstration: it uses a 4,000-row training sample, 30 trees, and 3 search candidates, so its scores differ from this README.
 
 ## What the model learns and where it fails
 
@@ -160,7 +160,7 @@ python report.py
 
 The README's results block is refreshed automatically from the generated metrics. If you change the experiment design, update the surrounding explanation too.
 
-To run the original compact walkthrough:
+To run the compact workflow:
 
 ```bash
 python scaffold.py
@@ -189,7 +189,7 @@ Keep `model.py` importable when loading: it defines the custom transformer and m
 
 ```text
 model.py                   # Reusable ML functions and custom transformer
-scaffold.py                # Original smaller teaching run
+scaffold.py                # Compact demonstration run
 report.py                  # Full experiment and chart generation
 update_readme.py            # Refresh the measured-results table
 checks.py                  # Boundary, missing-value, and immutability checks
@@ -214,6 +214,11 @@ artifacts/                 # Locally generated fitted model (ignored by Git)
 7. **Uncertainty and explanation:** use spatially aware uncertainty estimates, validation-set permutation importance, and subgroup error analysis. The current bootstrap ignores spatial dependence and retraining variability.
 8. **Learning presentation:** add a narrative notebook explaining each chart and modeling decision. If test diagnostics motivate another modeling iteration, use a new evaluation protocol rather than repeatedly optimizing this test score.
 
-## Acknowledgments
+## Data and references
 
-Completed through Deep-ML's step-by-step project, following the California housing workflow popularized by Aurélien Géron's *Hands-On Machine Learning*. The reporting extension presents reproducible results from this implementation; it does not claim a novel algorithm or production deployment.
+- [Download the California housing dataset (.tgz)](https://github.com/ageron/data/raw/main/housing.tgz)
+- [Browse the source CSV](https://github.com/ageron/data/blob/main/housing/housing.csv)
+- [Included dataset and provenance](data/README.md)
+- [Reference: Hands-On Machine Learning, chapter 2](https://github.com/ageron/handson-ml3/blob/main/02_end_to_end_machine_learning_project.ipynb)
+
+The dataset and reference material are credited to their original sources. All reported metrics and charts were generated by the experiments in this repository.
