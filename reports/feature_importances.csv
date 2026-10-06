@@ -1,0 +1,22 @@
+,importance
+log__median_income,0.31031171190087925
+cat__ocean_proximity_INLAND,0.12906842036205937
+remainder__people_per_house,0.0888382458795199
+geo__Cluster 3 similarity,0.07923760489976744
+remainder__bedrooms_ratio,0.0760993419019347
+remainder__rooms_per_house,0.04891738881488633
+geo__Cluster 6 similarity,0.03742013493995421
+geo__Cluster 2 similarity,0.033901694926324354
+geo__Cluster 1 similarity,0.03119197125450609
+remainder__housing_median_age,0.030176522967193274
+geo__Cluster 0 similarity,0.026063211539472216
+geo__Cluster 5 similarity,0.024308663687991564
+geo__Cluster 4 similarity,0.020636763370776107
+log__total_rooms,0.01359428433015044
+log__population,0.013517131673266696
+log__total_bedrooms,0.012370541178900152
+log__households,0.011871666014013606
+cat__ocean_proximity_<1H OCEAN,0.006385986795546893
+cat__ocean_proximity_NEAR OCEAN,0.0038343901675846667
+cat__ocean_proximity_NEAR BAY,0.001960509657235377
+cat__ocean_proximity_ISLAND,0.0002938137380373871

@@ -15,7 +15,6 @@ from urllib.request import urlretrieve
 import pandas as pd
 
 def load_housing():
-    # TODO: Download housing.tgz once into tempfile.gettempdir() and read housing/housing.csv from it.
     tarball = Path(tempfile.gettempdir()) / "housing.tgz"
     if not tarball.exists():
         urlretrieve(
@@ -31,8 +30,7 @@ import numpy as np
 import pandas as pd
 
 def income_categories(df):
-    # TODO: pd.cut median_income with edges [0, 1.5, 3, 4.5, 6, inf] and labels 1..5; return an int Series.
-       # Bin median income into five categories, preserving the input index.
+    # Bin median income into five categories, preserving the input index.
     return pd.cut(
         df["median_income"],
         bins=[0, 1.5, 3.0, 4.5, 6.0, np.inf],
@@ -42,7 +40,6 @@ def income_categories(df):
 # Step 3 - stratified_split
 from sklearn.model_selection import train_test_split
 def stratified_split(df, test_size=0.2, random_state=42):
-    # TODO: train_test_split stratified on income_categories(df); return (train_set, test_set).
     train_set, test_set = train_test_split(
         df,
         test_size=test_size,
@@ -53,7 +50,6 @@ def stratified_split(df, test_size=0.2, random_state=42):
 
 # Step 4 - explore_correlations
 def explore_correlations(df):
-    # TODO: Pearson correlation of every numeric column with median_house_value, sorted descending, target excluded.
     # Compute Pearson correlations using only numeric columns.
     correlations = df.corr(method="pearson", numeric_only=True)
 
@@ -66,7 +62,6 @@ def explore_correlations(df):
 
 # Step 5 - add_ratio_features
 def add_ratio_features(df):
-    # TODO: Return a copy with rooms_per_house, bedrooms_ratio and people_per_house columns added.
     result = df.copy()
 
     result["rooms_per_house"] = result["total_rooms"] / result["households"]
@@ -77,7 +72,6 @@ def add_ratio_features(df):
 
 # Step 6 - split_features_labels
 def split_features_labels(df):
-    # TODO: Return (X without median_house_value, y = median_house_value Series).
     X = df.drop(columns=["median_house_value"])
     y = df["median_house_value"].copy()
     return X, y
@@ -90,14 +84,12 @@ from sklearn.metrics.pairwise import rbf_kernel
 
 class ClusterSimilarity(BaseEstimator, TransformerMixin):
     def __init__(self, n_clusters=10, gamma=1.0, random_state=None):
-        # TODO: store the parameters
         # Store parameters for scikit-learn compatibility.
         self.n_clusters = n_clusters
         self.gamma = gamma
         self.random_state = random_state
 
     def fit(self, X, y=None, sample_weight=None):
-        # TODO: fit KMeans(n_clusters, n_init=10, random_state) on X with sample_weight; keep it as self.kmeans_
         self.kmeans_ = KMeans(
             n_clusters=self.n_clusters,
             n_init=10,
@@ -107,13 +99,11 @@ class ClusterSimilarity(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        # TODO: rbf_kernel similarity of each row of X to the cluster centers
         return rbf_kernel(
             X, self.kmeans_.cluster_centers_, gamma=self.gamma
         )
 
     def get_feature_names_out(self, names=None):
-        # TODO: ["Cluster 0 similarity", ...]
         return [
             f"Cluster {i} similarity"
             for i in range(self.n_clusters)
@@ -125,7 +115,6 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
 def numeric_pipeline():
-    # TODO: make_pipeline(SimpleImputer(median), StandardScaler())
     return make_pipeline(
         SimpleImputer(strategy="median"),
         StandardScaler(),
@@ -136,12 +125,16 @@ from sklearn.impute import SimpleImputer
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import OneHotEncoder
 
+def normalize_missing(X):
+    """Treat both Python None and CSV NaN as missing categorical values."""
+    return pd.DataFrame(X).where(pd.notna(X), np.nan)
+
+
 def categorical_pipeline():
-    # TODO: make_pipeline(SimpleImputer(most_frequent), OneHotEncoder(handle_unknown='ignore'))
     return make_pipeline(
+        FunctionTransformer(normalize_missing, feature_names_out="one-to-one"),
         SimpleImputer(
             strategy="most_frequent",
-            missing_values = None,
             ),
         OneHotEncoder(handle_unknown="ignore"),
     )
@@ -154,7 +147,6 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import FunctionTransformer, StandardScaler
 
 def build_preprocessing(n_clusters=10, gamma=1.0, random_state=42):
-    # TODO: ColumnTransformer with 'log', 'geo', 'cat' transformers and remainder=numeric_pipeline().
     log_pipeline = make_pipeline(
         SimpleImputer(strategy="median"),
         FunctionTransformer(np.log, feature_names_out="one-to-one"),
@@ -194,16 +186,13 @@ def build_preprocessing(n_clusters=10, gamma=1.0, random_state=42):
 
 # Step 11 - rmse
 def rmse(y_true, y_pred):
-    # TODO: sqrt(mean((y_true - y_pred)^2)) as a float.
     y_true = np.asarray(y_true, dtype=float)
     y_pred = np.asarray(y_pred, dtype=float)
     return float(np.sqrt(np.mean((y_true - y_pred) ** 2)))
-    pass
 
 # Step 12 - dummy_baseline_rmse
 from sklearn.dummy import DummyRegressor
 def dummy_baseline_rmse(X, y):
-    # TODO: fit DummyRegressor(strategy='mean') and return its RMSE on (X, y).
     model = DummyRegressor(strategy="mean")
     model.fit(X, y)
 
@@ -212,7 +201,6 @@ def dummy_baseline_rmse(X, y):
 # Step 13 - cross_val_rmse
 from sklearn.model_selection import cross_val_score
 def cross_val_rmse(model, X, y, cv=3):
-    # TODO: cross_val_score with neg_root_mean_squared_error; return {'scores': [...], 'mean': ..., 'std': ...}.
     # Negate scikit-learn's negative RMSE scores to get positive errors.
     scores = -cross_val_score(
         model,
@@ -233,7 +221,6 @@ from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import make_pipeline
 
 def linear_model(preprocessing):
-    # TODO: make_pipeline(preprocessing, LinearRegression())
     # Combine preprocessing and regression without fitting either step.
     return make_pipeline(preprocessing, LinearRegression())
 
@@ -242,7 +229,6 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.pipeline import make_pipeline
 
 def forest_model(preprocessing, n_estimators=50, random_state=42):
-    # TODO: make_pipeline(preprocessing, RandomForestRegressor(n_estimators, random_state))
     return make_pipeline(
         preprocessing,
         RandomForestRegressor(
@@ -255,7 +241,6 @@ def forest_model(preprocessing, n_estimators=50, random_state=42):
 from sklearn.model_selection import RandomizedSearchCV
 
 def random_search(pipeline, X, y, n_iter=5, cv=3, random_state=42):
-    # TODO: RandomizedSearchCV over geo n_clusters 3..10 and forest max_features 2..8; fit and return it.
     param_distributions = {
         "columntransformer__geo__n_clusters": range(3, 11),
         "randomforestregressor__max_features": range(2, 9),
@@ -274,7 +259,6 @@ def random_search(pipeline, X, y, n_iter=5, cv=3, random_state=42):
 
 # Step 17 - test_rmse
 def test_rmse(model, test_set):
-    # TODO: add ratio features, split, predict with the fitted model, return rmse.
     # Prepare test inputs without modifying the original test set.
     test_with_ratios = add_ratio_features(test_set)
     X_test, y_test = split_features_labels(test_with_ratios)
@@ -285,7 +269,6 @@ def test_rmse(model, test_set):
 
 # Step 18 - bootstrap_rmse_ci
 def bootstrap_rmse_ci(y_true, y_pred, n_boot=200, alpha=0.05, random_state=42):
-    # TODO: bootstrap the RMSE by resampling index pairs; return (low, high) percentiles as floats.
     y_true = np.asarray(y_true, dtype=float)
     y_pred = np.asarray(y_pred, dtype=float)
     n = len(y_true)
@@ -305,7 +288,6 @@ def bootstrap_rmse_ci(y_true, y_pred, n_boot=200, alpha=0.05, random_state=42):
 
 # Step 19 - feature_importances
 def feature_importances(search, k=5):
-    # TODO: top-k (importance, name) tuples from the best estimator, importances rounded to 3 decimals.
     pipeline = search.best_estimator_
     names = pipeline.steps[0][1].get_feature_names_out()
     importances = pipeline.steps[-1][1].feature_importances_
@@ -326,7 +308,6 @@ def feature_importances(search, k=5):
 import pandas as pd
 
 def worst_errors(model, df, k=5):
-    # TODO: DataFrame of the k largest absolute errors with columns actual, predicted, abs_error.
     X, y = split_features_labels(add_ratio_features(df))
     predictions = model.predict(X)
 
@@ -342,13 +323,11 @@ def worst_errors(model, df, k=5):
 import joblib
 
 def save_and_reload(model, path):
-    # TODO: joblib.dump then joblib.load; return the reloaded model.
     joblib.dump(model, path)
     return joblib.load(path)
 
 # Step 22 - predict_new
 def predict_new(model, districts):
-    # TODO: DataFrame from the dicts, add ratio features, predict, return floats rounded to the dollar.
     df = pd.DataFrame(districts)
     X = add_ratio_features(df)
     predictions = model.predict(X)

@@ -1,0 +1,79 @@
+{
+  "rows": 20640,
+  "columns": 10,
+  "train_rows": 16512,
+  "test_rows": 4128,
+  "missing_values": {
+    "longitude": 0,
+    "latitude": 0,
+    "housing_median_age": 0,
+    "total_rooms": 0,
+    "total_bedrooms": 207,
+    "population": 0,
+    "households": 0,
+    "median_income": 0,
+    "median_house_value": 0,
+    "ocean_proximity": 0
+  },
+  "target_max": 500001.0,
+  "target_at_max": 965,
+  "cv": {
+    "Mean baseline": {
+      "scores": [
+        117002.58467055875,
+        114181.08722533587,
+        114734.7954678074
+      ],
+      "mean": 115306.15578790067,
+      "std": 1220.6696030956725
+    },
+    "Linear regression": {
+      "scores": [
+        68080.62734336684,
+        69231.81276527577,
+        69143.51017931903
+      ],
+      "mean": 68818.6500959872,
+      "std": 523.1045301598748
+    },
+    "Random forest": {
+      "scores": [
+        47559.31603805838,
+        47899.31117599497,
+        48363.85478877762
+      ],
+      "mean": 47940.82733427699,
+      "std": 329.76086679197635
+    }
+  },
+  "best_cv_rmse": 46404.32930371342,
+  "best_parameters": {
+    "randomforestregressor__max_features": 7,
+    "columntransformer__geo__n_clusters": 7
+  },
+  "test_rmse": 45723.6968986969,
+  "test_mae": 29299.87311388509,
+  "test_r2": 0.843817243781934,
+  "test_rmse_95_percent_bootstrap_ci": [
+    43585.57573249528,
+    47846.43247648085
+  ],
+  "baseline_test_rmse": 115727.18783341347,
+  "test_rmse_reduction_vs_baseline_percent": 60.49009938397961,
+  "bootstrap_resamples": 200,
+  "search_candidates": 5,
+  "cv_folds": 3,
+  "random_state": 42,
+  "n_estimators": 50,
+  "reloaded_predictions_identical": true,
+  "dataset_sha256": "2364609dc48bec7df3ba9dbb7041478e704ecddcee70ef1827ec3fc49d22c0cc",
+  "versions": {
+    "python": "3.12.2",
+    "numpy": "1.26.4",
+    "pandas": "2.2.2",
+    "scikit-learn": "1.5.2",
+    "matplotlib": "3.8.4",
+    "joblib": "1.4.2"
+  },
+  "elapsed_seconds": 37.89
+}
