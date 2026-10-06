@@ -322,8 +322,21 @@ def feature_importances(search, k=5):
         for importance, name in ranked[:k]
     ]
 
-# Step 20 - worst_errors (not yet solved)
-# TODO: implement
+# Step 20 - worst_errors
+import pandas as pd
+
+def worst_errors(model, df, k=5):
+    # TODO: DataFrame of the k largest absolute errors with columns actual, predicted, abs_error.
+    X, y = split_features_labels(add_ratio_features(df))
+    predictions = model.predict(X)
+
+    errors = pd.DataFrame(
+        {"actual": y, "predicted": predictions},
+        index=df.index,
+    )
+    errors["abs_error"] = (errors["actual"] - errors["predicted"]).abs()
+
+    return errors.sort_values("abs_error", ascending=False).head(k)
 
 # Step 21 - save_and_reload (not yet solved)
 # TODO: implement
