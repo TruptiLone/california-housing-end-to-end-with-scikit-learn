@@ -209,8 +209,24 @@ def dummy_baseline_rmse(X, y):
 
     return rmse(y, model.predict(X))
 
-# Step 13 - cross_val_rmse (not yet solved)
-# TODO: implement
+# Step 13 - cross_val_rmse
+from sklearn.model_selection import cross_val_score
+def cross_val_rmse(model, X, y, cv=3):
+    # TODO: cross_val_score with neg_root_mean_squared_error; return {'scores': [...], 'mean': ..., 'std': ...}.
+    # Negate scikit-learn's negative RMSE scores to get positive errors.
+    scores = -cross_val_score(
+        model,
+        X,
+        y,
+        cv=cv,
+        scoring="neg_root_mean_squared_error",
+    )
+
+    return {
+        "scores": [float(score) for score in scores],
+        "mean": float(scores.mean()),
+        "std": float(scores.std()),
+    }
 
 # Step 14 - linear_model (not yet solved)
 # TODO: implement
