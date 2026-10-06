@@ -1,8 +1,30 @@
 # California Housing — End-to-End Regression
 
-Predicting district-level median house values with reproducible preprocessing, geographic features, model comparison, and an independent test evaluation.
+This project uses **20,640 California housing districts** to learn how location, income, housing characteristics, and population relate to home values. **Each row describes one district (a census block group), not an individual house.** The dataset has **10 columns: nine input features and one target, `median_house_value`**. The goal is to predict a district's median house value in dollars from its nine input features. This is a **supervised regression problem** because the output is a numeric dollar amount, rather than a category such as “expensive” or “affordable.” The data is historical, associated with the 1990 census, so the predictions represent historical district values rather than current home prices.
 
-This project builds an end-to-end regression system with pandas and scikit-learn to predict median house values across California districts. It combines exploratory data analysis, feature engineering, geographic clustering, and automated hyperparameter tuning to compare models and evaluate their performance on held-out data. The repository includes the dataset, reproducible experiments, diagnostic visualizations, saved metrics, and checks for preprocessing and model persistence.
+### What goes in, and what comes out?
+
+Here is a real district from the held-out test set, with the prediction produced by the fitted model:
+
+| Input field | Example value | What it describes |
+|---|---:|---|
+| `longitude` | -121.95 | East–west location in degrees |
+| `latitude` | 37.11 | North–south location in degrees |
+| `housing_median_age` | 21.0 | Median housing age in years |
+| `total_rooms` | 2387.0 | Total rooms across the district |
+| `total_bedrooms` | 357.0 | Total bedrooms across the district |
+| `population` | 913.0 | Number of residents |
+| `households` | 341.0 | Number of households |
+| `median_income` | 7.736 | Scaled median household income (approximately $10,000 units) |
+| `ocean_proximity` | <1H OCEAN | Location relative to the ocean or bay |
+
+**Model output:** a predicted `median_house_value` of **$422,828** for this district. Its recorded value is **$397,700**, giving an absolute error of **$25,128**. This example comes from district index `3905` in [the saved test predictions](reports/test_predictions.csv).
+
+During training, the model sees the input features together with the recorded target values and learns their relationships. When predicting a new district, it receives **only the nine inputs**; the actual house value is not supplied. The output estimates the median value across the district, not the price of a specific property.
+
+### From raw inputs to a prediction
+
+The workflow adds ratio features, fills missing values, transforms numeric and categorical inputs, and creates geographic similarity features. It then compares linear regression with a random forest, tunes the forest using cross-validation, and evaluates the selected model on held-out districts. The sections below show the results, exploratory charts, and the full preprocessing and modeling pipeline.
 
 ![California training districts colored by median house value](reports/figures/geography.png)
 
